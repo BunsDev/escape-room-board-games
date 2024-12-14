@@ -8,7 +8,7 @@ interface GameCardProps {
 
 export const GameCard = ({ game, onClick }: GameCardProps) => {
   return (
-    <div 
+    <a 
       onClick={() => onClick(game)}
       className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-purple-500/20 cursor-pointer"
     >
@@ -30,6 +30,6 @@ export const GameCard = ({ game, onClick }: GameCardProps) => {
         <p className="text-gray-400 text-sm mb-2">{game.players} players • {game.time}</p>
         <p className="text-purple-300 font-semibold">{game.price}</p>
       </div>
-    </div>
+    </a>
   );
 };

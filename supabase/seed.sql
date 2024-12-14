@@ -14,7 +14,6 @@ INSERT INTO games (
     duration_min,
     duration_max,
     rating,
-    image_url,
     price,
     publisher
 ) VALUES
@@ -27,7 +26,6 @@ INSERT INTO games (
         60,
         120,
         4.5,
-        'https://images.unsplash.com/photo-1518780664697-55e3ad937233',
         14.99,
         (SELECT id FROM publishers WHERE name = 'Thames & Kosmos')
     ),
@@ -40,7 +38,6 @@ INSERT INTO games (
         45,
         60,
         4.3,
-        'https://images.unsplash.com/photo-1513977055326-8ae6272d90a7',
         29.99,
         (SELECT id FROM publishers WHERE name = 'Space Cowboys')
     ),
@@ -53,10 +50,18 @@ INSERT INTO games (
         60,
         60,
         4.0,
-        'https://images.unsplash.com/photo-1614332287897-cdc485fa562d',
         39.99,
         (SELECT id FROM publishers WHERE name = 'Spin Master Games')
     );
+
+-- Insert sample game images
+INSERT INTO game_images (game_id, storage_path, is_primary, display_order) VALUES
+    ((SELECT id FROM games WHERE title = 'Exit: The Abandoned Cabin'), 'games/abandoned-cabin-1.jpg', true, 0),
+    ((SELECT id FROM games WHERE title = 'Exit: The Abandoned Cabin'), 'games/abandoned-cabin-2.jpg', false, 1),
+    ((SELECT id FROM games WHERE title = 'Unlock!: The House on the Hill'), 'games/house-hill-1.jpg', true, 0),
+    ((SELECT id FROM games WHERE title = 'Unlock!: The House on the Hill'), 'games/house-hill-2.jpg', false, 1),
+    ((SELECT id FROM games WHERE title = 'Escape Room: The Game'), 'games/escape-room-1.jpg', true, 0),
+    ((SELECT id FROM games WHERE title = 'Escape Room: The Game'), 'games/escape-room-2.jpg', false, 1);
 
 -- Add categories to games
 INSERT INTO games_categories (game_id, category_id)

@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Logo } from './components/Logo';
 import { GameCard } from './components/GameCard';
 import { GameModal } from './components/GameModal';
 import { FilterButton } from './components/FilterButton';
 import { FilterModal } from './components/FilterModal';
-import { games } from './data/games';
-import { Game } from './types/game';
+import { LoadingSpinner } from './components/LoadingSpinner';
+import { ErrorMessage } from './components/ErrorMessage';
+import { useGames } from './hooks/useGames';
 import { FilterOptions } from './types/filter';
+import { Game, formatGameData } from './types/game';
 import { Search } from 'lucide-react';
 
 function App() {
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const { games, loading, error } = useGames();
+  const [selectedGame, setSelectedGame] = useState<Game|null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
@@ -30,22 +33,20 @@ function App() {
       const matchesPlayers = filters.playerCounts.length === 0 ||
         filters.playerCounts.some(range => {
           const [min, max] = range.split('-').map(Number);
-          const [gameMin, gameMax] = game.players.split('-').map(Number);
-          return gameMin >= min && gameMax <= max;
+          return game.min_players >= min && game.max_players <= max;
         });
 
       const matchesPrice = !filters.priceRange ||
         (() => {
-          const price = parseFloat(game.price.replace('$', ''));
           const [min, max] = filters.priceRange.split('-').map(Number);
-          return price >= min && price <= max;
+          return game.price >= min && game.price <= max;
         })();
 
       return matchesSearch && matchesDifficulty && matchesPlayers && matchesPrice;
     });
   };
 
-  const filteredGames = filterGames(games);
+  const filteredGames = filterGames(games).map(formatGameData);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -81,15 +82,21 @@ function App() {
           </p>
         </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGames.map(game => (
-            <GameCard
-              key={game.id}
-              game={game}
-              onClick={setSelectedGame}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <ErrorMessage message={error} />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredGames.map(game => (
+              <GameCard
+                key={game.id}
+                game={game}
+                onClick={() => setSelectedGame(game)}
+              />
+            ))}
+          </div>
+        )}
       </main>
 
       {selectedGame && (

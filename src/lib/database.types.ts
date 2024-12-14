@@ -20,14 +20,43 @@ export interface Database {
           duration_min: number
           duration_max: number
           rating: number
-          image_url: string
           price: number
-          publisher: string
+          publisher_id: string
           created_at: string
           updated_at: string
         }
-        Insert: Omit<Database['public']['Tables']['games']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert'
+          min_players: number
+          max_players: number
+          duration_min: number
+          duration_max: number
+          rating: number
+          price: number
+          publisher_id: string
+        }
         Update: Partial<Database['public']['Tables']['games']['Insert']>
+      }
+      game_images: {
+        Row: {
+          id: string
+          game_id: string
+          storage_path: string
+          is_primary: boolean
+          display_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          game_id: string
+          storage_path: string
+          is_primary?: boolean
+          display_order?: number
+        }
+        Update: Partial<Database['public']['Tables']['game_images']['Insert']>
       }
       publishers: {
         Row: {
@@ -36,7 +65,11 @@ export interface Database {
           website: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['publishers']['Row'], 'id' | 'created_at'>
+        Insert: {
+          id?: string
+          name: string
+          website?: string | null
+        }
         Update: Partial<Database['public']['Tables']['publishers']['Insert']>
       }
       game_categories: {
@@ -45,7 +78,10 @@ export interface Database {
           name: string
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['game_categories']['Row'], 'id' | 'created_at'>
+        Insert: {
+          id?: string
+          name: string
+        }
         Update: Partial<Database['public']['Tables']['game_categories']['Insert']>
       }
       games_categories: {
@@ -53,9 +89,21 @@ export interface Database {
           game_id: string
           category_id: string
         }
-        Insert: Database['public']['Tables']['games_categories']['Row']
-        Update: Partial<Database['public']['Tables']['games_categories']['Row']>
+        Insert: {
+          game_id: string
+          category_id: string
+        }
+        Update: Partial<Database['public']['Tables']['games_categories']['Insert']>
       }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
     }
   }
 }
